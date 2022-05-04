@@ -1,0 +1,132 @@
+.app-container {
+  background-image: linear-gradient(to right, #afedf7, #acffea);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "Roboto";
+}
+.title {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 0px;
+}
+.sudoku-container {
+  margin-top: 48px;
+  height: 75vh;
+  width: 60vw;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.timer-container {
+  background-image: url("https://assets.ccbp.in/frontend/react-js/digital-timer-elapsed-bg.png");
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  width: 400px;
+}
+.timer-controls-container {
+  display: flex;
+  justify-content: space-between;
+  width: 380px;
+  margin-top: 12px;
+}
+.timer {
+  font-size: 64px;
+}
+.sudoku-table-con {
+  height: 90%;
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding-top: 36px;
+  border-radius: 24px;
+  box-shadow: 0px 4px 16px 0px #b5bcbd;
+}
+.sudoku-table {
+  background-color: #66dfc0;
+  height: 360px;
+  width: 360px;
+}
+.button-icon {
+  height: 40px;
+  width: 40px;
+}
+.timer-button {
+  background-color: transparent;
+  border: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 700;
+}
+.result-container {
+  height: 50%;
+  width: 70%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  padding-top: 36px;
+  border-radius: 24px;
+  box-shadow: 0px 4px 16px 0px #b5bcbd;
+}
+.result-text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.play-again-button {
+  height: 60px;
+  width: 200px;
+  background-image: linear-gradient(to right, #7ce8f8, #6bf8d5);
+  font-size: 24px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.cells-container {
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
+  border: 2px solid black;
+}
+.cell-container {
+  display: flex;
+}
+.cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  width: 40px;
+  border: 1px solid #c7e2e6;
+  margin: 0px;
+  font-size: 24px;
+  font-weight: bold;
+}
+.cell-input {
+  height: 40px;
+  width: 40px;
+  padding-left: 12px;
+  border: 1px solid #c7e2e6;
+  background-color: #47b4c5;
+  outline: none;
+  font-size: 24px;
+  font-weight: bold;
+}
+.not-valid {
+  background-color: red;
+}
