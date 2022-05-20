@@ -1,7 +1,7 @@
 import "./index.css";
 import { Component } from "react";
+import GameResult from "../GameResult";
 
-let emptyCount = 31;
 class Sudoku extends Component {
   constructor(props) {
     super(props);
@@ -11,6 +11,7 @@ class Sudoku extends Component {
       gameCompleted: false,
       sudokuTableList: this.props.tableCellsList,
       won: false,
+      pause: true,
     };
   }
 
@@ -22,6 +23,7 @@ class Sudoku extends Component {
     } else {
       this.setState((prevState) => ({
         timeInSeconds: prevState.timeInSeconds - 1,
+        pause: false,
       }));
     }
   };
@@ -30,6 +32,7 @@ class Sudoku extends Component {
     const { timeRunning } = this.state;
     if (timeRunning) {
       clearInterval(this.intervalId);
+      this.setState({ pause: true });
     } else {
       this.intervalId = setInterval(this.decrementTimeInSeconds, 1000);
     }
@@ -37,7 +40,6 @@ class Sudoku extends Component {
   };
 
   onRestartCLick = () => {
-    emptyCount = 31;
     clearInterval(this.intervalId);
     this.setState({
       timeRunning: false,
@@ -45,27 +47,32 @@ class Sudoku extends Component {
       gameCompleted: false,
       sudokuTableList: this.props.tableCellsList,
       won: false,
+      pause: true,
     });
   };
 
   onPlayAgainButtonClick = () => {
-    emptyCount = 31;
     this.setState({
       timeRunning: false,
       timeInSeconds: 900,
       gameCompleted: false,
       sudokuTableList: this.props.tableCellsList,
       won: false,
+      pause: true,
     });
   };
 
   onCellChange = (index, subIndex, event) => {
-    const { tableCellsList } = this.props;
+    const { tableCellsList, ansTable } = this.props;
     const { sudokuTableList } = this.state;
+
     const userInput = parseInt(event.target.value);
     const enteredNum = userInput ? userInput : event.target.value;
     let isValid = true;
     let gameFinished = false;
+    if (isNaN(enteredNum)) {
+      isValid = false;
+    }
     if (tableCellsList[index].includes(enteredNum)) {
       isValid = false;
     }
@@ -86,20 +93,9 @@ class Sudoku extends Component {
     if (!isValid) {
       event.target.className = "cell-input not-valid";
     } else {
-      emptyCount -= 1;
-      console.log(emptyCount);
-      if (emptyCount === 0) {
-        gameFinished = true;
-      }
       event.target.className = "cell-input";
     }
-    if (gameFinished) {
-      this.setState({
-        gameCompleted: true,
-        sudokuTableList: this.props.tableCellsList,
-        won: true,
-      });
-    }
+
     this.setState((prevState) => ({
       sudokuTableList: prevState.sudokuTableList.map((eachItem, rIndex) => {
         if (rIndex === index) {
@@ -116,8 +112,9 @@ class Sudoku extends Component {
   };
 
   getCells = () => {
-    const { tableCellsList } = this.props;
-    const { sudokuTableList } = this.state;
+    const { tableCellsList, ansTable } = this.props;
+    const { sudokuTableList, pause } = this.state;
+    const cellsConClassName = pause ? "cell-input game-pause" : "cell-input";
     return (
       <ul className="cells-container">
         {tableCellsList.map((eachItem, index) => {
@@ -128,11 +125,12 @@ class Sudoku extends Component {
                   return (
                     <input
                       type="text"
-                      className="cell-input"
+                      className={cellsConClassName}
                       value={sudokuTableList[index][subIndex]}
                       onChange={(event) =>
                         this.onCellChange(index, subIndex, event)
                       }
+                      disabled={pause}
                     />
                   );
                 } else {
@@ -147,8 +145,9 @@ class Sudoku extends Component {
   };
 
   getDisplayComponent = () => {
-    const { tableCellsList } = this.props;
-    const { timeRunning, timeInSeconds, gameCompleted } = this.state;
+    const { tableCellsList, ansTable } = this.props;
+    const { timeRunning, timeInSeconds, sudokuTableList } = this.state;
+    let { gameCompleted, won } = this.state;
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = Math.floor(timeInSeconds % 60);
     const minutesDisplay = minutes > 9 ? `${minutes}` : `0${minutes}`;
@@ -157,23 +156,27 @@ class Sudoku extends Component {
       ? "https://assets.ccbp.in/frontend/react-js/pause-icon-img.png"
       : "https://assets.ccbp.in/frontend/react-js/play-icon-img.png";
     const startPauseButtonText = timeRunning ? "Pause" : "Start";
+    let match = true;
+    for (var i = 0; i < 9; i++) {
+      for (var j = 0; j < 9; j++) {
+        if (ansTable[i][j] !== sudokuTableList[i][j]) {
+          match = false;
+        }
+      }
+    }
+    if (match) {
+      gameCompleted = true;
+      won = true;
+    }
+    const resultText = won ? "You Won" : "You Lose";
+    const resultGreetings = won ? "Congratulations" : "Better Luck Next Time";
     if (gameCompleted) {
       return (
-        <div className="sudoku-container">
-          <div className="result-container">
-            <div className="result-text-container">
-              <h1>You Won</h1>
-              <h1>Congratulations</h1>
-            </div>
-            <button
-              type="button"
-              className="play-again-button"
-              onClick={this.onPlayAgainButtonClick}
-            >
-              Play Again
-            </button>
-          </div>
-        </div>
+        <GameResult
+          resultText={resultText}
+          resultGreetings={resultGreetings}
+          onPlayAgainButtonClick={this.onPlayAgainButtonClick}
+        />
       );
     } else {
       return (
@@ -218,12 +221,7 @@ class Sudoku extends Component {
   };
 
   render() {
-    return (
-      <div className="app-container">
-        <h1 className="title">SUDOKU</h1>
-        {this.getDisplayComponent()}
-      </div>
-    );
+    return <div>{this.getDisplayComponent()}</div>;
   }
 }
 export default Sudoku;
